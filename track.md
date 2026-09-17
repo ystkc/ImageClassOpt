@@ -1,0 +1,19 @@
+- [x] 配置解耦
+- [x] 调用壳
+-- [x] 输出流
+-- [x] 备份配置
+-- [x] 转移输出
+- [x] git和track
+-- [x] 建立git
+-- [x] 同步cloud studio
+-- [x] 重新梳理总体的优化步骤
+- [ ] 复现优化
+-- [ ] baseline通过
+-- [ ] 去掉items
+-- [ ] 测试batch size
+-- [ ] 测试num workers
+-- [ ] 测试pin mem
+-- [ ] 全部搬到cuda cudaif
+-- [ ] 增加autocast
+-- [ ] 增加non blocking
+-- [ ] 增加nhwc
