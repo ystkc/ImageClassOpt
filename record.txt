@@ -1,0 +1,112 @@
+baseline,epoch=5,batch_size=32,num_workers=4
+Epoch 1/5, Loss: 2.1349, Time: 3.7512, Accuracy: 0.3056
+Epoch 2/5, Loss: 1.4282, Time: 3.3814, Accuracy: 0.9167
+Epoch 3/5, Loss: 0.6451, Time: 3.4775, Accuracy: 1.0000
+Epoch 4/5, Loss: 0.2120, Time: 3.3146, Accuracy: 1.0000
+Epoch 5/5, Loss: 0.0639, Time: 3.4676, Accuracy: 1.0000
+batch128,epoch=5,batch_size=128,num_workers=4
+Epoch 1/5, Loss: 2.2239, Time: 4.9167, Accuracy: 0.1528
+Epoch 2/5, Loss: 1.8947, Time: 5.1954, Accuracy: 0.3472
+Epoch 3/5, Loss: 1.5537, Time: 4.3624, Accuracy: 0.4583
+Epoch 4/5, Loss: 1.2053, Time: 4.4379, Accuracy: 0.5417
+Epoch 5/5, Loss: 0.8807, Time: 4.4262, Accuracy: 0.7500
+batch64,epoch=5,batch_size=64,num_workers=4
+Epoch 1/5, Loss: 2.1933, Time: 4.1099, Accuracy: 0.1389
+Epoch 2/5, Loss: 1.6976, Time: 3.6641, Accuracy: 0.5278
+Epoch 3/5, Loss: 1.1351, Time: 4.0958, Accuracy: 0.9306
+Epoch 4/5, Loss: 0.6593, Time: 3.7350, Accuracy: 1.0000
+Epoch 5/5, Loss: 0.2671, Time: 4.1674, Accuracy: 1.0000
+nw8batch64,epoch=5,batch_size=64,num_workers=8
+Epoch 1/5, Loss: 2.2001, Time: 6.6236, Accuracy: 1.2500
+Epoch 2/5, Loss: 1.6660, Time: 3.2771, Accuracy: 4.3750
+Epoch 3/5, Loss: 1.1178, Time: 3.2733, Accuracy: 8.2500
+Epoch 4/5, Loss: 0.6163, Time: 3.6729, Accuracy: 8.7500
+Epoch 5/5, Loss: 0.2714, Time: 3.7098, Accuracy: 8.8750
+nw6batch64noitems,epoch=5,batch_size=64,num_workers=6
+nw6batch64noitems,epoch=5,batch_size=64,num_workers=6
+Epoch 1/5, Loss: 2.1948, Time: 3.7929, Accuracy: 0.3333
+Epoch 2/5, Loss: 1.6770, Time: 3.2776, Accuracy: 0.5833
+Epoch 3/5, Loss: 1.0828, Time: 3.1873, Accuracy: 0.8056
+Epoch 4/5, Loss: 0.5780, Time: 3.1274, Accuracy: 0.9444
+Epoch 5/5, Loss: 0.2321, Time: 3.1451, Accuracy: 1.0000
+nw6batch64noitemspinmem,epoch=5,batch_size=64,num_workers=6
+Epoch 1/5, Loss: 2.1522, Time: 7.4485, Accuracy: 0.1111
+Epoch 2/5, Loss: 1.6147, Time: 3.4270, Accuracy: 0.3611
+Epoch 3/5, Loss: 1.0197, Time: 3.1030, Accuracy: 0.9167
+Epoch 4/5, Loss: 0.5059, Time: 3.4082, Accuracy: 0.9861
+Epoch 5/5, Loss: 0.2048, Time: 3.4076, Accuracy: 1.0000
+allcudatest,epoch=5,batch_size=64,num_workers=0
+Epoch 1/5, Loss: 2.2399, Time: 4.5367, Accuracy: 0.1389
+Epoch 2/5, Loss: 1.8123, Time: 1.9055, Accuracy: 0.5278
+Epoch 3/5, Loss: 1.3167, Time: 1.9164, Accuracy: 0.7917
+Epoch 4/5, Loss: 0.8011, Time: 1.9199, Accuracy: 0.9167
+Epoch 5/5, Loss: 0.4186, Time: 1.9179, Accuracy: 0.9722
+testallcuda,epoch=5,batch_size=64,num_workers=0
+Epoch 1/5, Loss: 2.2534, Time: 5.6958, Accuracy: 0.2917
+Epoch 2/5, Loss: 1.8384, Time: 4.7732, Accuracy: 0.5000
+Epoch 3/5, Loss: 1.3574, Time: 4.9399, Accuracy: 0.8333
+Epoch 4/5, Loss: 0.8494, Time: 5.0156, Accuracy: 0.9306
+Epoch 5/5, Loss: 0.3918, Time: 5.1268, Accuracy: 0.9444
+asserttensorpos,epoch=5,batch_size=64,num_workers=0
+Epoch 1/5, Loss: 2.2508, Time: 8.1004, Accuracy: 0.2500
+Epoch 2/5, Loss: 1.8495, Time: 4.6544, Accuracy: 0.4722
+Epoch 3/5, Loss: 1.4178, Time: 4.8210, Accuracy: 0.7500
+Epoch 4/5, Loss: 0.9185, Time: 4.9144, Accuracy: 0.8750
+Epoch 5/5, Loss: 0.5007, Time: 5.0929, Accuracy: 0.9583
+autocast,epoch=5,batch_size=64,num_workers=0
+Epoch 1/5, Loss: 2.2112, Time: 9.3825, Accuracy: 0.3333
+Epoch 2/5, Loss: 1.7753, Time: 3.7600, Accuracy: 0.5139
+Epoch 3/5, Loss: 1.3073, Time: 3.7838, Accuracy: 0.8056
+Epoch 4/5, Loss: 0.8151, Time: 3.8893, Accuracy: 0.9167
+Epoch 5/5, Loss: 0.4306, Time: 4.1085, Accuracy: 0.9861
+1,epoch=5,batch_size=64,num_workers=0
+Epoch 1/5, Loss: 2.2451, Time: 6.2607, Accuracy: 0.1528
+Epoch 2/5, Loss: 1.8415, Time: 3.6972, Accuracy: 0.5278
+Epoch 3/5, Loss: 1.3554, Time: 4.0149, Accuracy: 0.7917
+Epoch 4/5, Loss: 0.8965, Time: 3.9694, Accuracy: 0.9167
+Epoch 5/5, Loss: 0.5328, Time: 4.1955, Accuracy: 0.9583
+nonblocking&channellast,epoch=5,batch_size=64,num_workers=0
+Epoch 1/5, Loss: 2.2412, Time: 1.5346, Accuracy: 0.1806
+Epoch 2/5, Loss: 1.8576, Time: 0.8244, Accuracy: 0.3056
+Epoch 3/5, Loss: 1.4204, Time: 0.8405, Accuracy: 0.7083
+Epoch 4/5, Loss: 0.9702, Time: 0.8123, Accuracy: 0.8750
+Epoch 5/5, Loss: 0.5686, Time: 0.8270, Accuracy: 0.9583
+batch256,epoch=5,batch_size=256,num_workers=0
+Epoch 1/5, Loss: 2.1512, Time: 1.3505, Accuracy: 0.1389
+Epoch 2/5, Loss: 1.3635, Time: 0.7618, Accuracy: 0.3472
+Epoch 3/5, Loss: 0.6298, Time: 0.7647, Accuracy: 0.5833
+Epoch 4/5, Loss: 0.2098, Time: 0.7670, Accuracy: 0.9306
+Epoch 5/5, Loss: 0.0373, Time: 0.7670, Accuracy: 0.9444
+lr9e-4,epoch=5,batch_size=256,num_workers=0
+Epoch 1/5, Loss: 2.1359, Time: 1.3332, Accuracy: 0.4167
+Epoch 2/5, Loss: 1.1744, Time: 0.7638, Accuracy: 0.5278
+Epoch 3/5, Loss: 0.2263, Time: 0.7637, Accuracy: 0.7222
+Epoch 4/5, Loss: 0.0377, Time: 0.7660, Accuracy: 0.9167
+Epoch 5/5, Loss: 0.0056, Time: 0.7645, Accuracy: 0.9167
+20percent,epoch=5,batch_size=256,num_workers=0
+Epoch 1/5, Loss: 1.7929, Time: 2.0406, Accuracy: 0.4444
+Epoch 2/5, Loss: 0.2280, Time: 1.5176, Accuracy: 0.9514
+Epoch 3/5, Loss: 0.0043, Time: 1.5192, Accuracy: 0.9375
+Epoch 4/5, Loss: 0.0009, Time: 1.5145, Accuracy: 0.9306
+Epoch 5/5, Loss: 0.0005, Time: 1.5142, Accuracy: 0.9306
+30percent,epoch=5,batch_size=256,num_workers=0
+Epoch 1/5, Loss: 1.5378, Time: 2.7171, Accuracy: 0.6528
+Epoch 2/5, Loss: 0.0482, Time: 2.2669, Accuracy: 0.8009
+Epoch 3/5, Loss: 0.0007, Time: 2.2663, Accuracy: 0.9537
+Epoch 4/5, Loss: 0.0002, Time: 2.2627, Accuracy: 0.9630
+Epoch 5/5, Loss: 0.0001, Time: 2.2675, Accuracy: 0.9769
+92percent,epoch=3,batch_size=256,num_workers=0
+Epoch 1/3, Loss: 0.4644, Time: 9.1084, Accuracy: 0.9583
+Epoch 2/3, Loss: 0.0014, Time: 8.6999, Accuracy: 0.9722
+Epoch 3/3, Loss: 0.0015, Time: 8.7707, Accuracy: 0.9965
+100percent,epoch=4,batch_size=256,num_workers=0
+100percent,epoch=4,batch_size=256,num_workers=0
+100percent,epoch=4,batch_size=256,num_workers=0
+Epoch 1/4, Loss: 0.4995, Time: 10.0627, Accuracy: 0.0000
+Epoch 2/4, Loss: 0.0227, Time: 9.6074, Accuracy: 0.0000
+Epoch 3/4, Loss: 0.0320, Time: 9.7577, Accuracy: 0.0000
+Epoch 4/4, Loss: 0.0053, Time: 9.7681, Accuracy: 0.0000
+maptest,epoch=3,batch_size=256,num_workers=0
+Epoch 1/3, Loss: 0.3911, Time: 10.7731, Accuracy: 0.0000
+Epoch 2/3, Loss: 0.0119, Time: 9.4306, Accuracy: 0.0000
+Epoch 3/3, Loss: 0.0010, Time: 9.4338, Accuracy: 0.0000
