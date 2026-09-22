@@ -19,7 +19,7 @@ class Config:
     lr: float = 9e-4 # 32=1e-4
 
     test_enable: bool = False
-    split_ratio: list = [0.0, 1.0, 0.0] # [discard, train, test]
+    split_ratio: list = None # [discard, train, test]
 
     use_profiler: bool = False
 
@@ -40,14 +40,15 @@ if __name__ == '__main__':
     print("load image")
     transform = v2.Compose([
         v2.Resize((224, 224)),
-        v2.ToImage(),
-        v2.ToDtype(torch.float32, scale=True),
+        v2.ToImagePIL(),
+        v2.PILToTensor(),
+        v2.ToDtype(torch.float32),
         v2.Normalize(
             mean=[0.485, 0.456, 0.406],
             std=[0.229, 0.224, 0.225]
         )
     ])
-    train_ds = datasets.ImageFolder("./images/train_sf", transform=transform)
+    train_ds = datasets.ImageFolder("./data/images/train_sf", transform=transform)
 
     print('split dataset')
     _, traindf, testdf = random_split(train_ds, SPLIT_RATIO, generator=torch.Generator().manual_seed(42))
@@ -123,7 +124,8 @@ if __name__ == '__main__':
     if USE_PROFILER:
         print("Train Profiler:")
         print(prof_train.key_averages().table())
-        print("Test Profiler:")
-        print(prof_test.key_averages().table())
+        if TEST_ENABLE:
+          print("Test Profiler:")
+          print(prof_test.key_averages().table())
         
     torch.save(model.state_dict(), f"{cfg.exp_name}.pth")
