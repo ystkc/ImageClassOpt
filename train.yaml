@@ -1,4 +1,4 @@
-exp_name: baseline
+exp_name: baseline env
 epoch: 4
 batch_size: 150
 lr: 9e-4

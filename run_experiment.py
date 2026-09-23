@@ -6,13 +6,12 @@ from datetime import datetime
 from omegaconf import OmegaConf
 
 SCRIPT = "train_baseline.py"
-CONFIG = "train.yaml"
+CONFIG = "train.yaml" 
 
 # load
 cfg = OmegaConf.load(CONFIG)
 ROOT = os.path.dirname(__file__)
-EXP_NAME = "baseline env"
-cfg.exp_name = EXP_NAME
+EXP_NAME = cfg.exp_name
 EXP_ROOT = os.path.join(ROOT, "exp", EXP_NAME)
 os.makedirs(EXP_ROOT, exist_ok=True)
 

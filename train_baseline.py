@@ -39,14 +39,13 @@ os.chdir(os.path.dirname(__file__))
 if __name__ == '__main__':
     print("load image")
     transform = v2.Compose([
-        v2.Resize((224, 224)),
-        v2.ToImagePIL(),
-        v2.PILToTensor(),
-        v2.ToDtype(torch.float32),
-        v2.Normalize(
-            mean=[0.485, 0.456, 0.406],
-            std=[0.229, 0.224, 0.225]
-        )
+      v2.Resize((224, 224)),
+      v2.PILToTensor(),                         # uint8, [0, 255]
+      v2.ConvertImageDtype(torch.float32),      # float32, 自动变为 [0, 1]
+      v2.Normalize(
+          mean=[0.485, 0.456, 0.406],
+          std=[0.229, 0.224, 0.225],
+      ),
     ])
     train_ds = datasets.ImageFolder("./data/images/train_sf", transform=transform)
 
@@ -128,4 +127,4 @@ if __name__ == '__main__':
           print("Test Profiler:")
           print(prof_test.key_averages().table())
         
-    torch.save(model.state_dict(), f"{cfg.exp_name}.pth")
+    torch.save(model.state_dict(), f"exp/{cfg.exp_name}/{cfg.exp_name}.pth")
