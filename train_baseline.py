@@ -16,6 +16,7 @@ class Config:
     exp_name: str
     epoch: int = 5
     batch_size: int = 256
+    num_workers: int = 4
     lr: float = 9e-4 # 32=1e-4
 
     test_enable: bool = False
@@ -55,10 +56,12 @@ if __name__ == '__main__':
     train_loader = DataLoader(
         traindf,
         batch_size=BATCH_SIZE,
+        num_workers=cfg.num_workers
     )
     test_loader = DataLoader(
         testdf,
         batch_size=BATCH_SIZE,
+        num_workers=cfg.num_workers
     )
 
 
@@ -80,7 +83,7 @@ if __name__ == '__main__':
 
     for epoch in range(EPOCH):
         model.train()
-        acc_loss = 0
+        acc_loss = torch.tensor(0.0).to(device)
         print(len(train_loader))
         
         if USE_PROFILER:
@@ -94,10 +97,10 @@ if __name__ == '__main__':
             loss = criterion(outputs, labels)
             loss.backward()
             optimizer.step()
-            acc_loss += loss.item()
+            acc_loss += loss
         if USE_PROFILER:
             prof_train.stop()
-        print(f"Epoch {epoch+1}/{EPOCH}, Loss: {acc_loss/len(train_loader):.4f} Time: {time.time() - start_time:.4f}")
+        print(f"Epoch {epoch+1}/{EPOCH}, Loss: {acc_loss.item()/len(train_loader):.4f} Time: {time.time() - start_time:.4f}")
 
         if not TEST_ENABLE:
             continue
@@ -122,9 +125,11 @@ if __name__ == '__main__':
         
     if USE_PROFILER:
         print("Train Profiler:")
-        print(prof_train.key_averages().table())
+        print(prof_train.key_averages().table(sort_by="self_cpu_time_total"))
+        print(prof_train.key_averages().table(sort_by="self_cuda_time_total"))
         if TEST_ENABLE:
           print("Test Profiler:")
-          print(prof_test.key_averages().table())
+          print(prof_test.key_averages().table(sort_by="self_cpu_time_total"))
+          print(prof_test.key_averages().table(sort_by="self_cuda_time_total"))
         
     torch.save(model.state_dict(), f"exp/{cfg.exp_name}/model.pth")
