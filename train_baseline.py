@@ -14,14 +14,18 @@ from dataclasses import dataclass
 @dataclass
 class Config:
     exp_name: str
-    epoch: int = 5
+    split_ratio: list = None # [discard, train, test]
     batch_size: int = 256
-    num_workers: int = 4
+    epoch: int = 5
     lr: float = 9e-4 # 32=1e-4
+    
+    num_workers: int = 7
+    persistent_workers: bool = False
+
+    pin_memory: bool = False
+    non_blocking: bool = False
 
     test_enable: bool = False
-    split_ratio: list = None # [discard, train, test]
-
     use_profiler: bool = False
 
 cfg: Config = OmegaConf.load("train.yaml")
@@ -56,12 +60,16 @@ if __name__ == '__main__':
     train_loader = DataLoader(
         traindf,
         batch_size=BATCH_SIZE,
-        num_workers=cfg.num_workers
+        num_workers=cfg.num_workers,
+        pin_memory=cfg.pin_memory,
+        persistent_workers=cfg.persistent_workers
     )
     test_loader = DataLoader(
         testdf,
         batch_size=BATCH_SIZE,
-        num_workers=cfg.num_workers
+        num_workers=cfg.num_workers,
+        pin_memory=cfg.pin_memory,
+        persistent_workers=cfg.persistent_workers
     )
 
 
@@ -90,8 +98,8 @@ if __name__ == '__main__':
             prof_train.start()
         start_time = time.time()
         for images, labels in train_loader:
-            images = images.to(device)
-            labels = labels.to(device)
+            images = images.to(device, non_blocking=cfg.non_blocking)
+            labels = labels.to(device, non_blocking=cfg.non_blocking)
             optimizer.zero_grad()
             outputs = model(images)
             loss = criterion(outputs, labels)
@@ -113,8 +121,8 @@ if __name__ == '__main__':
         start_time = time.time()
         with torch.no_grad():
             for images, labels in test_loader:
-                images = images.to(device)
-                labels = labels.to(device)
+                images = images.to(device, non_blocking=cfg.non_blocking)
+                labels = labels.to(device, non_blocking=cfg.non_blocking)
                 outputs = model(images)
                 accuracy(outputs, labels)
             accuracy = accuracy.compute()

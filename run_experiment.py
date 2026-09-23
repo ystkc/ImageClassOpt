@@ -17,22 +17,22 @@ os.makedirs(EXP_ROOT, exist_ok=True)
 
 proc = subprocess.Popen([sys.executable, SCRIPT], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
 
+# save
+OmegaConf.save(cfg, os.path.join(EXP_ROOT, "config.yaml"), resolve=True)
+
 # git
 commit = subprocess.check_output(["git", "log", "-1", "--pretty=%s"]).strip().decode("utf-8")
 os.system("git status")
 print(f"Previous commit: {commit!r} {'amend commit' if commit == EXP_NAME else 'new commit'}\n")
 input("continue?")
-# chdir, save
-os.chdir(EXP_ROOT)
-OmegaConf.save(cfg, "config.yaml", resolve=True)
 subprocess.check_call(["git", "add", "."])
 if commit == EXP_NAME:
     subprocess.check_call(["git", "commit", "--amend", "--no-edit"])
 else:
     subprocess.check_call(["git", "commit", "-m", EXP_NAME])
 
-
 # start
+os.chdir(EXP_ROOT)
 with open("stdout" + datetime.now().strftime("%Y%m%d_%H%M%S") + ".log", "wb") as f:
     for line in proc.stdout:
         sys.stdout.buffer.write(line)
