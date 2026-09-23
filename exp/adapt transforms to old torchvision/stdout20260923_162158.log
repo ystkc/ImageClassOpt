@@ -1,0 +1,127 @@
+2026-09-23 16:22:01 /root/.pyenv/versions/3.11.1/lib/python3.11/site-packages/torchvision/io/image.py:13: UserWarning: Failed to load image Python extension: '/root/.pyenv/versions/3.11.1/lib/python3.11/site-packages/torchvision/image.so: undefined symbol: _ZN3c1017RegisterOperatorsD1Ev'If you don't plan on using image functionality from `torchvision.io`, you can ignore this warning. Otherwise, there might be something wrong with your environment. Did you have `libjpeg` or `libpng` installed before building `torchvision` from source?
+2026-09-23 16:22:01   warn(
+2026-09-23 16:22:05 /root/.pyenv/versions/3.11.1/lib/python3.11/site-packages/torchvision/datapoints/__init__.py:12: UserWarning: The torchvision.datapoints and torchvision.transforms.v2 namespaces are still Beta. While we do not expect major breaking changes, some APIs may still change according to user feedback. Please submit any feedback you may have in this issue: https://github.com/pytorch/vision/issues/6753, and you can also check out https://github.com/pytorch/vision/issues/7319 to learn more about the APIs that we suspect might involve future changes. You can silence this warning by calling torchvision.disable_beta_transforms_warning().
+2026-09-23 16:22:05   warnings.warn(_BETA_TRANSFORMS_WARNING)
+2026-09-23 16:22:05 /root/.pyenv/versions/3.11.1/lib/python3.11/site-packages/torchvision/transforms/v2/__init__.py:54: UserWarning: The torchvision.datapoints and torchvision.transforms.v2 namespaces are still Beta. While we do not expect major breaking changes, some APIs may still change according to user feedback. Please submit any feedback you may have in this issue: https://github.com/pytorch/vision/issues/6753, and you can also check out https://github.com/pytorch/vision/issues/7319 to learn more about the APIs that we suspect might involve future changes. You can silence this warning by calling torchvision.disable_beta_transforms_warning().
+2026-09-23 16:22:05   warnings.warn(_BETA_TRANSFORMS_WARNING)
+2026-09-23 16:22:44 load image
+2026-09-23 16:22:44 split dataset
+2026-09-23 16:22:44 288 72
+2026-09-23 16:22:44 load model
+2026-09-23 16:22:44 train model
+2026-09-23 16:22:44 3
+2026-09-23 16:22:44 Epoch 1/4, Loss: 1.8147 Time: 8.9343
+2026-09-23 16:22:44 3
+2026-09-23 16:22:44 Epoch 2/4, Loss: 0.3153 Time: 8.3943
+2026-09-23 16:22:44 3
+2026-09-23 16:22:44 Epoch 3/4, Loss: 0.0059 Time: 8.2365
+2026-09-23 16:22:44 3
+2026-09-23 16:22:44 Epoch 4/4, Loss: 0.0007 Time: 8.5417
+2026-09-23 16:22:44 Train Profiler:
+2026-09-23 16:22:44 -------------------------------------------------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  
+2026-09-23 16:22:44                                                    Name    Self CPU %      Self CPU   CPU total %     CPU total  CPU time avg     Self CUDA   Self CUDA %    CUDA total  CUDA time avg    # of Calls  
+2026-09-23 16:22:44 -------------------------------------------------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  
+2026-09-23 16:22:44                                             aten::empty         0.14%      37.572ms         0.16%      42.857ms       4.834us       0.000us         0.00%       0.000us       0.000us          8865  
+2026-09-23 16:22:44                                           aten::random_         0.00%      79.512us         0.00%      79.512us      19.878us       0.000us         0.00%       0.000us       0.000us             4  
+2026-09-23 16:22:44                                              aten::item         0.01%       3.446ms        32.61%        9.000s       2.320ms       0.000us         0.00%      20.159us       0.005us          3880  
+2026-09-23 16:22:44                               aten::_local_scalar_dense         0.00%       1.341ms        32.59%        8.997s       2.319ms      20.159us         0.00%      20.159us       0.005us          3880  
+2026-09-23 16:22:44 enumerate(DataLoader)#_SingleProcessDataLoaderIter._...        45.47%       12.551s        57.76%       15.942s     996.406ms       0.000us         0.00%       0.000us       0.000us            16  
+2026-09-23 16:22:44                                        aten::lift_fresh         0.02%       5.692ms         0.02%       5.692ms       1.563us       0.000us         0.00%       0.000us       0.000us          3641  
+2026-09-23 16:22:44                                                aten::to         0.03%       8.139ms         3.28%     906.408ms     136.982us       0.000us         0.00%     163.116ms      24.651us          6617  
+2026-09-23 16:22:44                                              aten::view         0.08%      21.296ms         0.08%      21.296ms       4.459us       0.000us         0.00%       0.000us       0.000us          4776  
+2026-09-23 16:22:44                                           aten::permute         0.04%      10.457ms         0.05%      14.659ms      12.725us       0.000us         0.00%       0.000us       0.000us          1152  
+2026-09-23 16:22:44                                        aten::as_strided         0.02%       4.348ms         0.02%       4.348ms       3.518us       0.000us         0.00%       0.000us       0.000us          1236  
+2026-09-23 16:22:44                                          aten::_to_copy         0.07%      18.515ms         3.24%     895.656ms     384.732us       0.000us         0.00%     163.116ms      70.067us          2328  
+2026-09-23 16:22:44                                     aten::empty_strided         0.09%      24.915ms         0.10%      28.068ms       6.110us       0.000us         0.00%       0.000us       0.000us          4594  
+2026-09-23 16:22:44                                             aten::copy_         2.52%     696.377ms         3.13%     864.224ms     371.230us     163.116ms         1.52%     163.116ms      70.067us          2328  
+2026-09-23 16:22:44                                              aten::mul_         3.22%     888.328ms         3.28%     904.243ms     784.933us       0.000us         0.00%       0.000us       0.000us          1152  
+2026-09-23 16:22:44                                               aten::sub         2.86%     789.905ms         2.86%     789.905ms     685.681us       0.000us         0.00%       0.000us       0.000us          1152  
+2026-09-23 16:22:44                                              aten::div_         2.48%     684.537ms         2.48%     684.537ms     594.216us       0.000us         0.00%       0.000us       0.000us          1152  
+2026-09-23 16:22:44                                             aten::stack         0.00%     623.983us         0.91%     250.719ms      20.893ms       0.000us         0.00%       0.000us       0.000us            12  
+2026-09-23 16:22:44                                               aten::cat         0.90%     249.800ms         0.91%     250.018ms      20.835ms       0.000us         0.00%       0.000us       0.000us            12  
+2026-09-23 16:22:44                                            aten::narrow         0.00%     114.604us         0.00%     217.956us      18.163us       0.000us         0.00%       0.000us       0.000us            12  
+2026-09-23 16:22:44                                             aten::slice         0.00%      77.679us         0.00%     103.352us       8.613us       0.000us         0.00%       0.000us       0.000us            12  
+2026-09-23 16:22:44                                           aten::detach_         0.00%     201.852us         0.00%     353.278us       1.910us       0.000us         0.00%       0.000us       0.000us           185  
+2026-09-23 16:22:44                                                 detach_         0.00%     151.426us         0.00%     151.426us       0.819us       0.000us         0.00%       0.000us       0.000us           185  
+2026-09-23 16:22:44                                            Unrecognized         0.01%       2.612ms         0.01%       2.612ms     653.121us       0.000us         0.00%       0.000us       0.000us             4  
+2026-09-23 16:22:44                                         cudaMemcpyAsync         0.61%     167.666ms         0.61%     167.666ms       4.657ms       0.000us         0.00%       0.000us       0.000us            36  
+2026-09-23 16:22:44                        Memcpy HtoD (Pageable -> Device)         0.00%       0.000us         0.00%       0.000us       0.000us     163.116ms         1.52%     163.116ms       6.797ms            24  
+2026-09-23 16:22:44                                   cudaStreamSynchronize        32.59%        8.996s        32.59%        8.996s     249.883ms       0.000us         0.00%       0.000us       0.000us            36  
+2026-09-23 16:22:44                      Optimizer.zero_grad#Adam.zero_grad         0.02%       6.362ms         0.02%       6.362ms     530.177us       0.000us         0.00%       0.000us       0.000us            12  
+2026-09-23 16:22:44                                            aten::conv2d         0.00%       1.365ms         0.81%     222.301ms     349.530us       0.000us         0.00%        2.132s       3.352ms           636  
+2026-09-23 16:22:44                                       aten::convolution         0.02%       5.505ms         0.80%     220.936ms     347.384us       0.000us         0.00%        2.132s       3.352ms           636  
+2026-09-23 16:22:44                                      aten::_convolution         0.01%       3.975ms         0.78%     215.432ms     338.729us       0.000us         0.00%        2.132s       3.352ms           636  
+2026-09-23 16:22:44                                 aten::cudnn_convolution         0.48%     132.392ms         0.77%     211.457ms     332.479us        1.970s        18.32%        2.132s       3.352ms           636  
+2026-09-23 16:22:44                                        cudaLaunchKernel         2.03%     559.910ms         4.65%        1.283s     143.136us       0.000us         0.00%     189.587ms      21.155us          8962  
+2026-09-23 16:22:44 void cask__5x_cudnn::computeOffsetsKernel<false, fal...         0.00%       0.000us         0.00%       0.000us       0.000us       1.387ms         0.01%       1.387ms       3.180us           436  
+2026-09-23 16:22:44                                     cudaPeekAtLastError         0.00%     495.285us         0.00%     495.285us       0.165us       0.000us         0.00%       0.000us       0.000us          3004  
+2026-09-23 16:22:44                                         cudaMemsetAsync         0.01%       2.528ms         0.01%       2.528ms       2.778us       0.000us         0.00%       0.000us       0.000us           910  
+2026-09-23 16:22:44         _5x_cudnn_volta_scudnn_128x64_relu_medium_nn_v1         0.00%       0.000us         0.00%       0.000us       0.000us      79.823ms         0.74%      79.823ms       6.652ms            12  
+2026-09-23 16:22:44                                              aten::add_         0.06%      15.711ms         0.14%      39.012ms      13.215us     628.851ms         5.85%     633.860ms     214.722us          2952  
+2026-09-23 16:22:44                                        aten::batch_norm         0.00%       1.170ms         0.25%      68.064ms     107.019us       0.000us         0.00%     772.199ms       1.214ms           636  
+2026-09-23 16:22:44                            aten::_batch_norm_impl_index         0.01%       2.567ms         0.24%      66.894ms     105.180us       0.000us         0.00%     772.199ms       1.214ms           636  
+2026-09-23 16:22:44                                  aten::cudnn_batch_norm         0.09%      25.730ms         0.23%      64.327ms     101.144us     750.381ms         6.98%     772.199ms       1.214ms           636  
+2026-09-23 16:22:44                                        aten::empty_like         0.01%       2.238ms         0.06%      15.785ms      16.273us       0.000us         0.00%       0.000us       0.000us           970  
+2026-09-23 16:22:44                                             aten::relu_         0.02%       6.853ms         0.13%      35.873ms      61.009us       0.000us         0.00%     381.709ms     649.165us           588  
+2026-09-23 16:22:44                                        aten::clamp_min_         0.02%       5.562ms         0.11%      29.020ms      49.354us     371.454ms         3.45%     381.709ms     649.165us           588  
+2026-09-23 16:22:44                                        aten::max_pool2d         0.00%      92.583us         0.01%       3.811ms     317.621us       0.000us         0.00%      52.146ms       4.345ms            12  
+2026-09-23 16:22:44                           aten::max_pool2d_with_indices         0.00%     437.727us         0.01%       3.719ms     309.905us      37.172ms         0.35%      52.146ms       4.345ms            12  
+2026-09-23 16:22:44 void at::native::vectorized_elementwise_kernel<2, at...         0.00%       0.000us         0.00%       0.000us       0.000us       1.840ms         0.02%       1.840ms       2.893us           636  
+2026-09-23 16:22:44 void cudnn::bn_fw_tr_1C11_kernel_NCHW<float, float, ...         0.00%       0.000us         0.00%       0.000us       0.000us      57.744ms         0.54%      57.744ms       4.812ms            12  
+2026-09-23 16:22:44                                    cudaFuncSetAttribute         0.00%     492.965us         0.00%     539.519us       2.452us       0.000us         0.00%     175.710us       0.799us           220  
+2026-09-23 16:22:44                               aten::adaptive_avg_pool2d         0.00%      65.662us         1.15%     317.910ms      26.492ms       0.000us         0.00%       6.758ms     563.196us            12  
+2026-09-23 16:22:44                                              aten::mean         0.00%     475.887us         1.15%     317.844ms      26.487ms       5.123ms         0.05%       6.758ms     563.196us            12  
+2026-09-23 16:22:44                                           aten::flatten         0.00%      44.913us         0.00%     156.958us      13.080us       0.000us         0.00%       0.000us       0.000us            12  
+2026-09-23 16:22:44                                            aten::linear         0.00%      79.991us         0.12%      32.631ms       2.719ms       0.000us         0.00%     330.208us      27.517us            12  
+2026-09-23 16:22:44                                                 aten::t         0.00%     244.401us         0.00%     505.846us       8.431us       0.000us         0.00%       0.000us       0.000us            60  
+2026-09-23 16:22:44                                         aten::transpose         0.00%     157.004us         0.00%     261.445us       4.357us       0.000us         0.00%       0.000us       0.000us            60  
+2026-09-23 16:22:44                                             aten::addmm         0.07%      18.745ms         0.12%      32.380ms       2.698ms     244.064us         0.00%     330.208us      27.517us            12  
+2026-09-23 16:22:44                                aten::cross_entropy_loss         0.00%     114.040us         0.09%      25.744ms       2.145ms       0.000us         0.00%     106.208us       8.851us            12  
+2026-09-23 16:22:44                                       aten::log_softmax         0.00%      90.520us         0.07%      17.953ms       1.496ms       0.000us         0.00%      36.543us       3.045us            12  
+2026-09-23 16:22:44                                      aten::_log_softmax         0.00%     357.137us         0.06%      17.852ms       1.488ms      31.455us         0.00%      36.543us       3.045us            12  
+2026-09-23 16:22:44                                       aten::nll_loss_nd         0.00%      51.002us         0.03%       7.677ms     639.722us       0.000us         0.00%      69.665us       5.805us            12  
+2026-09-23 16:22:44                                          aten::nll_loss         0.00%      72.424us         0.03%       7.626ms     635.472us       0.000us         0.00%      69.665us       5.805us            12  
+2026-09-23 16:22:44                                  aten::nll_loss_forward         0.00%     318.313us         0.03%       7.553ms     629.437us      58.241us         0.00%      69.665us       5.805us            12  
+2026-09-23 16:22:44                                           aten::resize_         0.00%       8.026us         0.00%       8.026us       0.669us       0.000us         0.00%       0.000us       0.000us            12  
+2026-09-23 16:22:44                                         aten::ones_like         0.00%      58.217us         0.02%       6.291ms     524.264us       0.000us         0.00%      25.567us       2.131us            12  
+2026-09-23 16:22:44                                             aten::fill_         0.01%       1.947ms         0.04%      10.506ms      29.346us      17.067ms         0.16%      17.071ms      47.684us           358  
+2026-09-23 16:22:44 autograd::engine::evaluate_function: NllLossBackward...         0.00%     287.547us         0.01%       1.633ms     136.082us       0.000us         0.00%      65.535us       5.461us            12  
+2026-09-23 16:22:44                                        NllLossBackward0         0.00%     142.150us         0.00%       1.345ms     112.119us       0.000us         0.00%      65.535us       5.461us            12  
+2026-09-23 16:22:44                                 aten::nll_loss_backward         0.00%     439.807us         0.00%       1.203ms     100.273us      43.391us         0.00%      65.535us       5.461us            12  
+2026-09-23 16:22:44                                             aten::zero_         0.00%     924.576us         0.02%       5.388ms      15.572us       0.000us         0.00%      17.045ms      49.264us           346  
+2026-09-23 16:22:44 autograd::engine::evaluate_function: LogSoftmaxBackw...         0.00%     109.299us         0.00%     549.103us      45.759us       0.000us         0.00%      28.482us       2.373us            12  
+2026-09-23 16:22:44                                     LogSoftmaxBackward0         0.00%      87.264us         0.00%     439.804us      36.650us       0.000us         0.00%      28.482us       2.373us            12  
+2026-09-23 16:22:44                        aten::_log_softmax_backward_data         0.00%     212.907us         0.00%     352.540us      29.378us      28.482us         0.00%      28.482us       2.373us            12  
+2026-09-23 16:22:44     autograd::engine::evaluate_function: AddmmBackward0         0.00%     388.186us         0.04%      11.574ms     964.496us       0.000us         0.00%     414.876us      34.573us            12  
+2026-09-23 16:22:44                                          AddmmBackward0         0.00%     188.965us         0.01%       2.211ms     184.259us       0.000us         0.00%     251.966us      20.997us            12  
+2026-09-23 16:22:44                                                aten::mm         0.00%       1.168ms         0.01%       1.759ms      73.276us     251.966us         0.00%     251.966us      10.499us            24  
+2026-09-23 16:22:44           cudaOccupancyMaxActiveBlocksPerMultiprocessor         0.03%       9.267ms         0.05%      13.958ms       8.925us       0.000us         0.00%      14.212ms       9.087us          1564  
+2026-09-23 16:22:44                                               aten::sum         0.00%     337.701us         0.03%       8.924ms     743.642us     162.910us         0.00%     162.910us      13.576us            12  
+2026-09-23 16:22:44 autograd::engine::evaluate_function: torch::autograd...         0.03%       8.713ms         0.06%      17.733ms       9.179us       0.000us         0.00%       0.000us       0.000us          1932  
+2026-09-23 16:22:44                         torch::autograd::AccumulateGrad         0.02%       4.421ms         0.03%       9.021ms       4.669us       0.000us         0.00%       0.000us       0.000us          1932  
+2026-09-23 16:22:44                                            aten::detach         0.01%       1.640ms         0.02%       4.599ms       2.380us       0.000us         0.00%       0.000us       0.000us          1932  
+2026-09-23 16:22:44                                                  detach         0.01%       2.959ms         0.01%       2.959ms       1.532us       0.000us         0.00%       0.000us       0.000us          1932  
+2026-09-23 16:22:44         autograd::engine::evaluate_function: TBackward0         0.00%      64.345us         0.00%     161.726us      13.477us       0.000us         0.00%       0.000us       0.000us            12  
+2026-09-23 16:22:44                                              TBackward0         0.00%      26.187us         0.00%      97.381us       8.115us       0.000us         0.00%       0.000us       0.000us            12  
+2026-09-23 16:22:44      autograd::engine::evaluate_function: ViewBackward0         0.00%      58.231us         0.00%     127.818us      10.651us       0.000us         0.00%       0.000us       0.000us            12  
+2026-09-23 16:22:44                                           ViewBackward0         0.00%      30.033us         0.00%      69.587us       5.799us       0.000us         0.00%       0.000us       0.000us            12  
+2026-09-23 16:22:44                                           aten::reshape         0.00%      13.547us         0.00%      39.554us       3.296us       0.000us         0.00%       0.000us       0.000us            12  
+2026-09-23 16:22:44      autograd::engine::evaluate_function: MeanBackward1         0.00%      99.958us         0.04%      11.691ms     974.251us       0.000us         0.00%       2.364ms     196.961us            12  
+2026-09-23 16:22:44                                           MeanBackward1         0.00%      89.232us         0.04%      11.591ms     965.921us       0.000us         0.00%       2.364ms     196.961us            12  
+2026-09-23 16:22:44                                            aten::expand         0.00%      61.763us         0.00%      77.324us       6.444us       0.000us         0.00%       0.000us       0.000us            12  
+2026-09-23 16:22:44                                               aten::div         0.00%     450.486us         0.04%      11.424ms     952.042us       2.364ms         0.02%       2.364ms     196.961us            12  
+2026-09-23 16:22:44      autograd::engine::evaluate_function: ReluBackward0         0.02%       4.603ms         0.11%      31.258ms      53.160us       0.000us         0.00%     540.441ms     919.117us           588  
+2026-09-23 16:22:44                                           ReluBackward0         0.01%       2.210ms         0.10%      26.655ms      45.332us       0.000us         0.00%     540.441ms     919.117us           588  
+2026-09-23 16:22:44                                aten::threshold_backward         0.03%       9.035ms         0.09%      24.445ms      41.573us     540.441ms         5.03%     540.441ms     919.117us           588  
+2026-09-23 16:22:44       autograd::engine::evaluate_function: AddBackward0         0.00%       1.166ms         0.01%       1.399ms       7.288us       0.000us         0.00%       0.000us       0.000us           192  
+2026-09-23 16:22:44                                            AddBackward0         0.00%     232.753us         0.00%     232.753us       1.212us       0.000us         0.00%       0.000us       0.000us           192  
+2026-09-23 16:22:44 autograd::engine::evaluate_function: CudnnBatchNormB...         0.03%       9.105ms         0.20%      55.765ms      87.680us       0.000us         0.00%        1.231s       1.936ms           636  
+2026-09-23 16:22:44                                 CudnnBatchNormBackward0         0.01%       3.156ms         0.17%      46.660ms      73.364us       0.000us         0.00%        1.231s       1.936ms           636  
+2026-09-23 16:22:44                         aten::cudnn_batch_norm_backward         0.06%      15.932ms         0.16%      43.504ms      68.402us        1.231s        11.45%        1.231s       1.936ms           636  
+2026-09-23 16:22:44 autograd::engine::evaluate_function: ConvolutionBack...         0.03%       8.870ms         2.39%     658.972ms       1.036ms       0.000us         0.00%        5.175s       8.137ms           636  
+2026-09-23 16:22:44                                    ConvolutionBackward0         0.01%       2.560ms         2.34%     646.048ms       1.016ms       0.000us         0.00%        4.860s       7.641ms           636  
+2026-09-23 16:22:44                              aten::convolution_backward         0.24%      66.927ms         2.33%     643.488ms       1.012ms        4.860s        45.19%        4.860s       7.641ms           636  
+2026-09-23 16:22:44 -------------------------------------------------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  
+2026-09-23 16:22:44 Self CPU time total: 27.602s
+2026-09-23 16:22:44 Self CUDA time total: 10.754s
+2026-09-23 16:22:44 
