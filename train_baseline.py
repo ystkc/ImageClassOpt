@@ -127,4 +127,4 @@ if __name__ == '__main__':
           print("Test Profiler:")
           print(prof_test.key_averages().table())
         
-    torch.save(model.state_dict(), f"exp/{cfg.exp_name}/{cfg.exp_name}.pth")
+    torch.save(model.state_dict(), f"exp/{cfg.exp_name}/model.pth")
