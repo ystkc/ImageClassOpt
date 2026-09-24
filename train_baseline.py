@@ -17,13 +17,13 @@ from dataclasses import dataclass
 class Config:
     exp_name: str
     split_ratio: list = None # [discard, train, test]
-    batch_size: int = 256
+    batch_size: int = 128
     epoch: int = 5
     lr: float = 9e-4 # 32=1e-4
     fused_optimizer: bool = None
     
-    num_workers: int = 7
-    persistent_workers: bool = False
+    num_workers: int = 6
+    persistent_workers: bool = True
 
     pin_memory: bool = False
     non_blocking: bool = False
@@ -31,9 +31,9 @@ class Config:
     cudnn_benchmark: bool = False
     cuda_transform: bool = False
     cuda_if: bool = False
-    channels_last: bool = False
-    antialias: bool = False
-    autocast: bool = False
+    channels_last: bool = True
+    antialias: bool = True
+    autocast: bool = True
 
     test_enable: bool = False
     use_profiler: bool = False
@@ -199,7 +199,7 @@ if __name__ == '__main__':
                         outputs = model(images)
                 else:
                     outputs = model(images)
-                accuracy(outputs, labels)
+                accuracy.update(outputs, labels)
             accuracy = accuracy.compute()
         model.train()
         if USE_PROFILER:
