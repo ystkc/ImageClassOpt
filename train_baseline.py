@@ -85,7 +85,7 @@ if __name__ == '__main__':
               std=[0.229, 0.224, 0.225],
           ),
         ])
-        gpu_transform = v2.Compose([])
+        gpu_transform = v2.Identity()
     if cfg.cuda_if:
         train_ds = CUDAImageFolder("./data/images/train_sf", pre_transform=transform)
     else:

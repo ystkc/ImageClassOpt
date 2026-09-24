@@ -1,137 +1,160 @@
-"""Train an image classifier from an OmegaConf YAML configuration."""
-import argparse
+'''训练'''
 import json
-import time
-from pathlib import Path
-
+import os
 import torch
+from torchmetrics import Accuracy
+import time
 import torch.nn as nn
 import torch.optim as optim
-from omegaconf import OmegaConf
-from torch.amp import GradScaler, autocast
-from torch.utils.data import DataLoader, random_split
-from torchmetrics import Accuracy
+from torch.utils.data import random_split, DataLoader
 from torchvision import datasets, models
 from torchvision.transforms import v2
-
 from CUDAImageFolder import CUDAImageFolder
+from torch.amp import autocast, GradScaler
 
+EPOCH = 4
+# 32=1e-4
+BATCH_SIZE = 96
+LR = 9e-4
+PIN_MEM = True
+NUM_WORKERS = 6
+AUTOCAST = False
 
+NEED_TEST = False
+SPLIT_RATIO = [0.9, 0.08, 0.02] # [discard, train, test]
 
+# 注意！由单进程CUDAImageFolder创建GPU张量时不允许使用多进程、PinMemory
+CUDAIF = True
+if CUDAIF:
+    PIN_MEM = False
+    NUM_WORKERS = 0
 
-def transform_from(cfg):
-    return v2.Compose([
-        v2.Resize(tuple(cfg.image_size), antialias=False), v2.ToImage(),
-        v2.ToDtype(torch.float32, scale=True),
-        v2.Normalize(mean=list(cfg.normalize.mean), std=list(cfg.normalize.std)),
-    ])
+USE_PROFILER = False
 
+os.chdir(os.path.dirname(__file__))
 
-def train(cfg):
-    out = root_path(cfg.output_dir)
-    out.mkdir(parents=True, exist_ok=True)
-    cuda_ds = bool(cfg.data.cuda_image_folder)
-    workers = 0 if cuda_ds else int(cfg.data.num_workers)
-    pin_memory = False if cuda_ds else bool(cfg.data.pin_memory)
-    print(OmegaConf.to_yaml(cfg, resolve=True))
+if __name__ == '__main__':
     print("load image")
-    transform = transform_from(cfg)
-    data_dir = root_path(cfg.data.train_dir)
-    if cuda_ds:
-        dataset = CUDAImageFolder(str(data_dir), pre_transform=transform, to_cuda=True)
+    transform = v2.Compose([
+        v2.Resize((224, 224), antialias=False),
+        v2.ToImage(),
+        v2.ToDtype(torch.float32, scale=True),
+        v2.Normalize(
+            mean=[0.485, 0.456, 0.406],
+            std=[0.229, 0.224, 0.225]
+        )
+    ])  
+    train_ds = None
+    if CUDAIF:
+        train_ds = CUDAImageFolder("./data/images/train_sf", pre_transform=transform, to_cuda=True)
     else:
-        dataset = datasets.ImageFolder(str(data_dir), transform=transform)
-    with (out / cfg.output.class_map).open("w", encoding="utf-8") as file:
-        json.dump(dataset.classes, file, ensure_ascii=False, indent=4)
+        train_ds = datasets.ImageFolder("./data/images/train_sf", transform=transform)
+    # output train_ds.classes
+    # json.dump(train_ds.classes, open("map.json", "w", encoding="utf-8"), ensure_ascii=False, indent=4)
 
-    print("split dataset")
-    _, train_set, test_set = random_split(
-        dataset, list(cfg.data.split_ratio),
-        generator=torch.Generator().manual_seed(int(cfg.seed)))
-    print(len(train_set), len(test_set))
-    if cuda_ds:
-        dataset.preprocess(train_set.indices + test_set.indices)
-    common = dict(batch_size=int(cfg.train.batch_size), num_workers=workers,
-                  pin_memory=pin_memory, persistent_workers=workers > 0)
-    train_loader = DataLoader(train_set, shuffle=True, **common)
-    test_loader = DataLoader(test_set, shuffle=False, **common)
+    print('split dataset')
+    _, traindf, testdf = random_split(train_ds, SPLIT_RATIO, generator=torch.Generator().manual_seed(42))
+    print(len(traindf), len(testdf))
+    if CUDAIF:
+        train_ds.preprocess(traindf.indices + testdf.indices)
+    train_loader = DataLoader(
+        traindf,
+        batch_size=BATCH_SIZE,
+        shuffle=True,
+        num_workers=NUM_WORKERS,
+        pin_memory=PIN_MEM,
+        persistent_workers=NUM_WORKERS > 0
+    )
+    test_loader = DataLoader(
+        testdf,
+        batch_size=BATCH_SIZE,
+        shuffle=False,
+        num_workers=NUM_WORKERS,
+        pin_memory=PIN_MEM,
+        persistent_workers=NUM_WORKERS > 0
+    )
+
 
     print("load model")
     device = "cuda" if torch.cuda.is_available() else "cpu"
-    weights = models.ResNet50_Weights.DEFAULT if cfg.model.pretrained else None
-    model = models.resnet50(weights=weights)
-    class_count = len(dataset.classes)
-    model.fc = nn.Linear(model.fc.in_features, class_count)
+    model = models.resnet50(weights=models.ResNet50_Weights.DEFAULT)
+    classcnt = len(train_ds.classes)
+    model.fc = nn.Linear(model.fc.in_features, classcnt)
+
     model = model.to(device=device, memory_format=torch.channels_last)
+    
     criterion = nn.CrossEntropyLoss()
-    optimizer = optim.Adam(model.parameters(), lr=float(cfg.train.learning_rate))
-    scaler = GradScaler(device, enabled=bool(cfg.runtime.autocast))
-    profiler = torch.profiler.profile() if cfg.runtime.profiler else None
-    losses, times, accuracies = [], [], []
+    optimizer = optim.Adam(model.parameters(), lr=LR)
+    
+
+    testname = input("测试名：")
 
     print("train model")
-    for epoch in range(int(cfg.train.epochs)):
+    loss_track = []
+    time_track = []
+    accuracy_track = []
+    if USE_PROFILER:
+        prof = torch.profiler.profile(acc_events=True)
+
+    scaler = GradScaler()
+
+    for epoch in range(EPOCH):
         model.train()
-        total_loss = torch.tensor(0.0, device=device)
-        if profiler:
-            profiler.start()
-        started = time.time()
+        acc_loss = torch.tensor(0.0, device=device)
+        print(len(train_loader))
+        
+        if USE_PROFILER:
+            prof.start()
+        start_time = time.time()
         for images, labels in train_loader:
-            if not cuda_ds:
-                images, labels = images.to(device), labels.to(device)
+            if not CUDAIF:
+                images = images.to(device)
+                labels = labels.to(device)
             optimizer.zero_grad()
-            with autocast(device, enabled=bool(cfg.runtime.autocast)):
-                loss = criterion(model(images), labels)
-            scaler.scale(loss).backward()
-            scaler.step(optimizer)
-            scaler.update()
-            total_loss += loss.detach()
-        elapsed = time.time() - started
-        if profiler:
-            profiler.stop()
-        mean_loss = total_loss.item() / len(train_loader)
-        print(f"Epoch {epoch + 1}/{cfg.train.epochs}, Loss: {mean_loss:.4f}")
-        losses.append(mean_loss)
-        times.append(elapsed)
-        accuracy_value = 0.0
-        if cfg.train.evaluate:
-            model.eval()
-            metric = Accuracy(task="multiclass", num_classes=class_count).to(device)
-            with torch.no_grad():
-                for images, labels in test_loader:
-                    if not cuda_ds:
-                        images, labels = images.to(device), labels.to(device)
-                    with autocast(device, enabled=bool(cfg.runtime.autocast)):
-                        metric(model(images), labels)
-            accuracy_value = metric.compute().item()
-            print(f"Test Accuracy: {accuracy_value:.4f}")
-        accuracies.append(accuracy_value)
+            if AUTOCAST:
+                with autocast(device):
+                    outputs = model(images)
+                    loss = criterion(outputs, labels)
+                scaler.scale(loss).backward()
+                scaler.step(optimizer)
+                scaler.update()
+            else:
+                outputs = model(images)
+                loss = criterion(outputs, labels)
+                loss.backward()
+                optimizer.step()
+            acc_loss += loss
+        time_track.append(time.time() - start_time)
+        if USE_PROFILER:
+            prof.stop()
+        print(f"Epoch {epoch+1}/{EPOCH}, Loss: {acc_loss/len(train_loader):.4f}")
+        loss_track.append(acc_loss.item()/len(train_loader))
 
-    if profiler:
-        print(profiler.key_averages().table())
-    torch.save(model.state_dict(), out / cfg.output.model)
-    with (out / cfg.output.metrics).open("w", encoding="utf-8") as file:
-        file.write(f"epochs={cfg.train.epochs},batch_size={cfg.train.batch_size},num_workers={workers}\n")
-        for i, values in enumerate(zip(losses, times, accuracies), 1):
-            loss, elapsed, accuracy = values
-            file.write(f"Epoch {i}/{cfg.train.epochs}, Loss: {loss:.4f}, Time: {elapsed:.4f}, Accuracy: {accuracy:.4f}\n")
+        if not NEED_TEST:
+            accuracy_track.append(0.0)
+            continue
 
-
-def load_config():
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--config", default="configs/train.yaml")
-    parser.add_argument("--output-dir")
-    args, overrides = parser.parse_known_args()
-    cfg = OmegaConf.merge(OmegaConf.load(root_path(args.config)), OmegaConf.from_dotlist(overrides))
-    if args.output_dir:
-        cfg.output_dir = args.output_dir
-    return cfg
-
-
-if __name__ == "__main__":
-    print("start training...")
-    with open("stop.txt", "w+") as file:
-        file.write("stop training")
-    raise ValueError("stop training")
-    exit()
-    train(load_config())
+        print("test model...", end='')
+        model.eval()
+        accuracy = Accuracy(task='multiclass', num_classes=classcnt).to(device)
+        with torch.no_grad():
+            for images, labels in test_loader:
+                if not CUDAIF:
+                    images = images.to(device)
+                    labels = labels.to(device)
+                if AUTOCAST:
+                    with autocast(device):
+                        outputs = model(images)
+                accuracy(outputs, labels)
+            accuracy = accuracy.compute()
+            print(f"Test Accuracy: {accuracy:.4f}")
+            accuracy_track.append(accuracy.item())
+    if USE_PROFILER:
+        print(prof.key_averages().table())
+        
+    torch.save(model.state_dict(), f"{testname}.pth")
+    # 向记录文档中追加本次的结果
+    with open("record.txt", "a", encoding="utf-8") as f:
+        f.write(f"{testname},epoch={EPOCH},batch_size={BATCH_SIZE},num_workers={NUM_WORKERS}\n")
+        for i in range(EPOCH):
+            f.write(f"Epoch {i+1}/{EPOCH}, Loss: {loss_track[i]:.4f}, Time: {time_track[i]:.4f}, Accuracy: {accuracy_track[i]:.4f}\n")
