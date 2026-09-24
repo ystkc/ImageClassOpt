@@ -126,7 +126,7 @@ if __name__ == '__main__':
     classcnt = len(train_ds.classes)
     model.fc = nn.Linear(model.fc.in_features, classcnt)
 
-    model = model.to(device=device)
+    model = model.to(device=device, memory_format=memory_format)
     
     criterion = nn.CrossEntropyLoss()
     optimizer = optim.Adam(model.parameters(), lr=LR, fused=cfg.fused_optimizer)
