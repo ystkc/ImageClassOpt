@@ -38,7 +38,10 @@ class CUDAImageFolder(datasets.DatasetFolder):
             indices = range(len(self.samples))
         for i, idx in enumerate(indices):
             path, target = self.samples[idx]
-            sample = self.loader(path)
+            try:
+                sample = self.loader(path)
+            except:
+                print(path, 'is not a valid image')
             if self.pre_transform:
                 sample = self.pre_transform(sample)
             data_tensors.append(sample)

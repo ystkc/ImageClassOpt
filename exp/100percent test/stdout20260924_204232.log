@@ -1,0 +1,19 @@
+2026-09-24 20:42:37 /root/.pyenv/versions/3.11.1/lib/python3.11/site-packages/torch/utils/data/dataset.py:473: UserWarning: Length of split at index 0 is 0. This might result in an empty dataset.
+2026-09-24 20:42:37   warnings.warn(
+2026-09-24 20:43:43 load image
+2026-09-24 20:43:43 split dataset
+2026-09-24 20:43:43 ./data/images/train_sf/poster/ns26_4d97fe1af8adccf3b0c2c4a152f47d41.jpg
+2026-09-24 20:43:43 3240 360 items
+2026-09-24 20:43:43 26 batch
+2026-09-24 20:43:43 Prepare Time: 28.599103
+2026-09-24 20:43:43 load model
+2026-09-24 20:43:43 train model
+2026-09-24 20:43:43 Epoch 1/4, Loss: 0.2654 Time: 8.9980
+2026-09-24 20:43:43 test model...    Test Accuracy: 0.9972 Time: 0.3563
+2026-09-24 20:43:43 Epoch 2/4, Loss: 0.0036 Time: 8.3725
+2026-09-24 20:43:43 test model...    Test Accuracy: 1.0000 Time: 0.3473
+2026-09-24 20:43:43 Epoch 3/4, Loss: 0.0003 Time: 8.3841
+2026-09-24 20:43:43 test model...    Test Accuracy: 1.0000 Time: 0.3490
+2026-09-24 20:43:43 Epoch 4/4, Loss: 0.0003 Time: 8.3784
+2026-09-24 20:43:43 test model...    Test Accuracy: 1.0000 Time: 0.3515
+2026-09-24 20:43:43 total time:62.732064
