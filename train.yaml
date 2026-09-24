@@ -1,4 +1,4 @@
-exp_name: perform transforms on GPU using uint8 from CPU
+exp_name: skip epoch period(print time loss)
 split_ratio: [0.9, 0.08, 0.02]
 batch_size: 96
 epoch: 4

@@ -33,6 +33,8 @@ class Config:
     test_enable: bool = False
     use_profiler: bool = False
 
+SKIP_EPOCH_SYNC = False
+
 cfg: Config = OmegaConf.load("train.yaml")
 if cfg.num_workers == 0:
     cfg.persistent_workers = False
@@ -117,17 +119,21 @@ if __name__ == '__main__':
         prof_train = torch.profiler.profile(acc_events=True)
         prof_test = torch.profiler.profile(acc_events=True)
 
-    acc_time = 0.0
+    if SKIP_EPOCH_SYNC:
+        acc_loss = torch.zeros((EPOCH,), dtype=torch.float32).to(device)
+        acc_time = time.time()
+    else:
+        acc_loss = torch.tensor(0.0, dtype=torch.float32).to(device)
+        acc_time = 0.0
+    model.train()
     for epoch in range(EPOCH):
-        model.train()
-        acc_loss = torch.tensor(0.0).to(device)
-        
         if USE_PROFILER:
             if epoch == 0:
                 prof_train_1st.start()
             else:
                 prof_train.start()
-        start_time = time.time()
+        if not SKIP_EPOCH_SYNC:
+            start_time = time.time()
         for images, labels in train_loader:
             images = images.to(device, non_blocking=cfg.non_blocking)
             if gpu_transform is not None:
@@ -138,15 +144,19 @@ if __name__ == '__main__':
             loss = criterion(outputs, labels)
             loss.backward()
             optimizer.step()
-            acc_loss += loss.detach()
+            if SKIP_EPOCH_SYNC:
+                acc_loss[epoch] += loss.detach()
+            else:
+                acc_loss += loss.detach()
         if USE_PROFILER:
             if epoch == 0:
                 prof_train_1st.stop()
             else:
                 prof_train.stop()
-        epoch_time = time.time() - start_time
-        print(f"Epoch {epoch+1}/{EPOCH}, Loss: {acc_loss.item()/batch_cnt:.4f} Time: {epoch_time:.4f}")
-        acc_time += epoch_time
+        if not SKIP_EPOCH_SYNC:
+            epoch_time = time.time() - start_time
+            print(f"Epoch {epoch+1}/{EPOCH}, Loss: {acc_loss.item()/batch_cnt:.4f} Time: {epoch_time:.4f}")
+            acc_time += epoch_time
 
         if not TEST_ENABLE:
             continue
@@ -166,11 +176,16 @@ if __name__ == '__main__':
                 outputs = model(images)
                 accuracy(outputs, labels)
             accuracy = accuracy.compute()
+        model.train()
         if USE_PROFILER:
             prof_test.stop()
         print(f"    Test Accuracy: {accuracy:.4f} Time: {time.time() - start_time:.4f}")
         
-        
+    if SKIP_EPOCH_SYNC:
+        acc_time = time.time() - acc_time
+        for epoch in range(EPOCH):
+            print(f"Epoch {epoch+1}/{EPOCH}, Loss: {acc_loss[epoch].item()/batch_cnt:.4f}")
+            
     if USE_PROFILER:
         print("Train Profiler:")
         print(prof_train.key_averages().table(sort_by="cpu_time_total"))

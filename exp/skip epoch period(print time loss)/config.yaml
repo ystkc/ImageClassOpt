@@ -1,4 +1,4 @@
-exp_name: perform transforms on GPU using uint8 from CPU
+exp_name: skip epoch period(print time loss)
 split_ratio:
 - 0.9
 - 0.08
@@ -13,7 +13,6 @@ pin_memory: true
 non_blocking: true
 cudnn_benchmark: false
 cuda_transform: true
-skip_epoch_sync: true
 cuda_if: true
 test_enable: false
 use_profiler: true
