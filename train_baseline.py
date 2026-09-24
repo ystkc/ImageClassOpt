@@ -66,10 +66,10 @@ if __name__ == '__main__':
     if cfg.cuda_transform:
         transform = v2.Compose([
             v2.Resize((224, 224), antialias=cfg.antialias),
-            v2.PILToTensor(),  # uint8, [0, 255]
+            v2.ToImage(),  # ret uint8, [0, 255]
         ])
         gpu_transform = v2.Compose([
-            v2.ConvertImageDtype(torch.float32),  # [0, 255] -> [0, 1]
+            v2.ToDtype(torch.float32, scale=True),  # [0, 255] -> [0, 1]
             v2.Normalize(
                 mean=[0.485, 0.456, 0.406],
                 std=[0.229, 0.224, 0.225],
@@ -78,8 +78,8 @@ if __name__ == '__main__':
     else:
         transform = v2.Compose([
           v2.Resize((224, 224), antialias=cfg.antialias),
-          v2.PILToTensor(),                         # uint8, [0, 255]
-          v2.ConvertImageDtype(torch.float32),      # float32, 自动变为 [0, 1]
+          v2.ToImage(),
+          v2.ToDtype(torch.float32, scale=True),
           v2.Normalize(
               mean=[0.485, 0.456, 0.406],
               std=[0.229, 0.224, 0.225],
