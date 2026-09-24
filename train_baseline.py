@@ -97,6 +97,7 @@ if __name__ == '__main__':
         prof_train = torch.profiler.profile(acc_events=True)
         prof_test = torch.profiler.profile(acc_events=True)
 
+    acc_time = 0.0
     for epoch in range(EPOCH):
         model.train()
         acc_loss = torch.tensor(0.0).to(device)
@@ -115,7 +116,9 @@ if __name__ == '__main__':
             acc_loss += loss.detach()
         if USE_PROFILER:
             prof_train.stop()
-        print(f"Epoch {epoch+1}/{EPOCH}, Loss: {acc_loss.item()/batch_cnt:.4f} Time: {time.time() - start_time:.4f}")
+        epoch_time = time.time() - start_time
+        print(f"Epoch {epoch+1}/{EPOCH}, Loss: {acc_loss.item()/batch_cnt:.4f} Time: {epoch_time:.4f}")
+        acc_time += epoch_time
 
         if not TEST_ENABLE:
             continue
@@ -146,5 +149,5 @@ if __name__ == '__main__':
           print("Test Profiler:")
           print(prof_test.key_averages().table(sort_by="cpu_time_total"))
           print(prof_test.key_averages().table(sort_by="cuda_time_total"))
-        
+    print(f"total time:{acc_time:4f}")
     torch.save(model.state_dict(), f"exp/{cfg.exp_name}/model.pth")
