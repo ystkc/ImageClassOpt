@@ -31,6 +31,7 @@ class Config:
     cuda_transform: bool = False
     cuda_if: bool = False
     channels_last: bool = False
+    antialias: bool = False
 
     test_enable: bool = False
     use_profiler: bool = False
@@ -64,7 +65,7 @@ if __name__ == '__main__':
     print("load image")
     if cfg.cuda_transform:
         transform = v2.Compose([
-            v2.Resize((224, 224)),
+            v2.Resize((224, 224), antialias=cfg.antialias),
             v2.PILToTensor(),  # uint8, [0, 255]
         ])
         gpu_transform = v2.Compose([
@@ -76,7 +77,7 @@ if __name__ == '__main__':
         ])
     else:
         transform = v2.Compose([
-          v2.Resize((224, 224)),
+          v2.Resize((224, 224), antialias=cfg.antialias),
           v2.PILToTensor(),                         # uint8, [0, 255]
           v2.ConvertImageDtype(torch.float32),      # float32, 自动变为 [0, 1]
           v2.Normalize(
