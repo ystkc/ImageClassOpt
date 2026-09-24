@@ -25,6 +25,7 @@ class Config:
     pin_memory: bool = False
     non_blocking: bool = False
 
+    cudnn_benchmark: bool = False
     cuda_if: bool = False
 
     test_enable: bool = False
@@ -33,6 +34,8 @@ class Config:
 cfg: Config = OmegaConf.load("train.yaml")
 if cfg.num_workers == 0:
     cfg.persistent_workers = False
+
+torch.backends.cudnn.benchmark = cfg.cudnn_benchmark
 
 EPOCH = cfg.epoch
 BATCH_SIZE = cfg.batch_size
