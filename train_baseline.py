@@ -7,6 +7,7 @@ import torch.nn as nn
 import torch.optim as optim
 from torch.utils.data import random_split, DataLoader
 from torchvision import datasets, models
+from CUDAImageFolder import CUDAImageFolder
 from torchvision.transforms import v2
 from omegaconf import OmegaConf
 
@@ -29,11 +30,20 @@ class Config:
     cudnn_benchmark: bool = False
     cuda_transform: bool = False
     cuda_if: bool = False
+    channels_last: bool = False
 
     test_enable: bool = False
     use_profiler: bool = False
 
 cfg: Config = OmegaConf.load("train.yaml")
+if cfg.cuda_if:
+    cfg.num_workers = 0
+    cfg.pin_memory = False
+    cfg.non_blocking = False
+if cfg.channels_last:
+    memory_format = torch.channels_last
+else:
+    memory_format = torch.preserve_format
 if cfg.num_workers == 0:
     cfg.persistent_workers = False
 
@@ -74,11 +84,18 @@ if __name__ == '__main__':
               std=[0.229, 0.224, 0.225],
           ),
         ])
-        gpu_transform = None
-    train_ds = datasets.ImageFolder("./data/images/train_sf", transform=transform)
+        gpu_transform = v2.Compose([])
+    if cfg.cuda_if:
+        train_ds = CUDAImageFolder("./data/images/train_sf", pre_transform=transform)
+    else:
+        train_ds = datasets.ImageFolder("./data/images/train_sf", transform=transform)
 
     print('split dataset')
+    prepare_time_start = time.time()
     _, traindf, testdf = random_split(train_ds, SPLIT_RATIO, generator=torch.Generator().manual_seed(42))
+    if cfg.cuda_if:
+        train_ds.preprocess(traindf.indices + testdf.indices, memory_format=memory_format)
+
     print(len(traindf), len(testdf), 'items')
     train_loader = DataLoader(
         traindf,
@@ -98,6 +115,9 @@ if __name__ == '__main__':
         persistent_workers=cfg.persistent_workers,
         shuffle=False
     )
+    prepare_time = time.time() - prepare_time_start
+    print(f"Prepare Time: {prepare_time:4f}")
+
 
 
     print("load model")
@@ -128,10 +148,10 @@ if __name__ == '__main__':
                 prof_train.start()
         start_time = time.time()
         for images, labels in train_loader:
-            images = images.to(device, non_blocking=cfg.non_blocking)
-            if gpu_transform is not None:
-                images = gpu_transform(images)
-            labels = labels.to(device, non_blocking=cfg.non_blocking)
+            if not cfg.cuda_if:
+                labels = labels.to(device, non_blocking=cfg.non_blocking)
+                images = images.to(device, non_blocking=cfg.non_blocking)
+            images = gpu_transform(images)
             optimizer.zero_grad()
             outputs = model(images)
             loss = criterion(outputs, labels)
@@ -158,10 +178,10 @@ if __name__ == '__main__':
         start_time = time.time()
         with torch.no_grad():
             for images, labels in test_loader:
-                images = images.to(device, non_blocking=cfg.non_blocking)
-                if gpu_transform is not None:
-                    images = gpu_transform(images)
-                labels = labels.to(device, non_blocking=cfg.non_blocking)
+                if not cfg.cuda_if:
+                    labels = labels.to(device, non_blocking=cfg.non_blocking)
+                    images = images.to(device, non_blocking=cfg.non_blocking)
+                images = gpu_transform(images)
                 outputs = model(images)
                 accuracy(outputs, labels)
             accuracy = accuracy.compute()
@@ -181,5 +201,5 @@ if __name__ == '__main__':
           print("Test Profiler:")
           print(prof_test.key_averages().table(sort_by="cpu_time_total"))
           print(prof_test.key_averages().table(sort_by="cuda_time_total"))
-    print(f"total time:{acc_time:4f}")
+    print(f"total time:{acc_time + prepare_time:4f}")
     torch.save(model.state_dict(), f"exp/{cfg.exp_name}/model.pth")

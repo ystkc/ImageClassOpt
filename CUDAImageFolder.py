@@ -14,9 +14,8 @@ class CUDAImageFolder(datasets.DatasetFolder):
         target_transform: Optional[Callable] = None,
         loader: Callable[[str], Any] = read_image,
         is_valid_file: Optional[Callable[[str], bool]] = None,
-        allow_empty: bool = False,
         pre_transform: Optional[Callable] = None,
-        to_cuda: bool = False,
+        to_cuda: bool = True,
     ):
         super().__init__(
             root,
@@ -25,14 +24,13 @@ class CUDAImageFolder(datasets.DatasetFolder):
             transform=transform,
             target_transform=target_transform,
             is_valid_file=is_valid_file,
-            allow_empty=allow_empty,
         )
         self.imgs = self.samples
         self.loader = loader
         self.pre_transform = pre_transform
         self.to_cuda = to_cuda
     
-    def preprocess(self, indices=None):
+    def preprocess(self, indices=None, memory_format=torch.channels_last):
         data_tensors = []
         target_tensors = []
         self.idx_map = [0] * len(self.samples)
@@ -47,9 +45,9 @@ class CUDAImageFolder(datasets.DatasetFolder):
             target_tensors.append(target)
             self.idx_map[idx] = i
         
-        # 3. 批量移动到显存
-        device = "cuda" if self.to_cuda else "cpu"
-        self.data = torch.stack(data_tensors).to(device=device, non_blocking=True, memory_format=torch.channels_last)
+        # move to GPU
+        device = "cuda" if self.to_cuda and torch.cuda.is_available() else "cpu"
+        self.data = torch.stack(data_tensors).to(device=device, non_blocking=True, memory_format=memory_format)
         self.targets = torch.tensor(target_tensors).to(device=device, non_blocking=True)
     
     def __getitem__(self, idx):
