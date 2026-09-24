@@ -27,6 +27,7 @@ class Config:
     non_blocking: bool = False
 
     cudnn_benchmark: bool = False
+    cuda_transform: bool = False
     cuda_if: bool = False
 
     test_enable: bool = False
@@ -51,15 +52,29 @@ os.chdir(os.path.dirname(__file__))
 
 if __name__ == '__main__':
     print("load image")
-    transform = v2.Compose([
-      v2.Resize((224, 224)),
-      v2.PILToTensor(),                         # uint8, [0, 255]
-      v2.ConvertImageDtype(torch.float32),      # float32, 自动变为 [0, 1]
-      v2.Normalize(
-          mean=[0.485, 0.456, 0.406],
-          std=[0.229, 0.224, 0.225],
-      ),
-    ])
+    if cfg.cuda_transform:
+        transform = v2.Compose([
+            v2.Resize((224, 224)),
+            v2.PILToTensor(),  # uint8, [0, 255]
+        ])
+        gpu_transform = v2.Compose([
+            v2.ConvertImageDtype(torch.float32),  # [0, 255] -> [0, 1]
+            v2.Normalize(
+                mean=[0.485, 0.456, 0.406],
+                std=[0.229, 0.224, 0.225],
+            ),
+        ])
+    else:
+        transform = v2.Compose([
+          v2.Resize((224, 224)),
+          v2.PILToTensor(),                         # uint8, [0, 255]
+          v2.ConvertImageDtype(torch.float32),      # float32, 自动变为 [0, 1]
+          v2.Normalize(
+              mean=[0.485, 0.456, 0.406],
+              std=[0.229, 0.224, 0.225],
+          ),
+        ])
+        gpu_transform = None
     train_ds = datasets.ImageFolder("./data/images/train_sf", transform=transform)
 
     print('split dataset')
@@ -115,6 +130,8 @@ if __name__ == '__main__':
         start_time = time.time()
         for images, labels in train_loader:
             images = images.to(device, non_blocking=cfg.non_blocking)
+            if gpu_transform is not None:
+                images = gpu_transform(images)
             labels = labels.to(device, non_blocking=cfg.non_blocking)
             optimizer.zero_grad()
             outputs = model(images)
@@ -143,6 +160,8 @@ if __name__ == '__main__':
         with torch.no_grad():
             for images, labels in test_loader:
                 images = images.to(device, non_blocking=cfg.non_blocking)
+                if gpu_transform is not None:
+                    images = gpu_transform(images)
                 labels = labels.to(device, non_blocking=cfg.non_blocking)
                 outputs = model(images)
                 accuracy(outputs, labels)
