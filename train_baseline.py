@@ -19,7 +19,7 @@ class Config:
     batch_size: int = 256
     epoch: int = 5
     lr: float = 9e-4 # 32=1e-4
-    fused_optimizer: bool = True
+    fused_optimizer: bool = None
     
     num_workers: int = 7
     persistent_workers: bool = False
