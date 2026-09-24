@@ -10,6 +10,7 @@ from torchvision import datasets, models
 from CUDAImageFolder import CUDAImageFolder
 from torchvision.transforms import v2
 from omegaconf import OmegaConf
+from torch.amp import autocast, GradScaler
 
 from dataclasses import dataclass
 @dataclass
@@ -32,6 +33,7 @@ class Config:
     cuda_if: bool = False
     channels_last: bool = False
     antialias: bool = False
+    autocast: bool = False
 
     test_enable: bool = False
     use_profiler: bool = False
@@ -140,6 +142,7 @@ if __name__ == '__main__':
 
     model.train()
     acc_time = 0.0
+    scaler = GradScaler()
     for epoch in range(EPOCH):
         acc_loss = torch.tensor(0.0).to(device)
         if USE_PROFILER:
@@ -154,10 +157,18 @@ if __name__ == '__main__':
                 images = images.to(device, non_blocking=cfg.non_blocking)
             images = gpu_transform(images)
             optimizer.zero_grad()
-            outputs = model(images)
-            loss = criterion(outputs, labels)
-            loss.backward()
-            optimizer.step()
+            if cfg.autocast:
+                with autocast(device):
+                    outputs = model(images)
+                    loss = criterion(outputs, labels)
+                scaler.scale(loss).backward()
+                scaler.step(optimizer)
+                scaler.update()
+            else:
+                outputs = model(images)
+                loss = criterion(outputs, labels)
+                loss.backward()
+                optimizer.step()
             acc_loss += loss.detach()
         if USE_PROFILER:
             if epoch == 0:
@@ -183,7 +194,11 @@ if __name__ == '__main__':
                     labels = labels.to(device, non_blocking=cfg.non_blocking)
                     images = images.to(device, non_blocking=cfg.non_blocking)
                 images = gpu_transform(images)
-                outputs = model(images)
+                if cfg.autocast:
+                    with autocast(device):
+                        outputs = model(images)
+                else:
+                    outputs = model(images)
                 accuracy(outputs, labels)
             accuracy = accuracy.compute()
         model.train()
