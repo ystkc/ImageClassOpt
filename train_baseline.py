@@ -25,6 +25,8 @@ class Config:
     pin_memory: bool = False
     non_blocking: bool = False
 
+    cuda_if: bool = False
+
     test_enable: bool = False
     use_profiler: bool = False
 
@@ -133,11 +135,11 @@ if __name__ == '__main__':
         
     if USE_PROFILER:
         print("Train Profiler:")
-        print(prof_train.key_averages().table(sort_by="self_cpu_time_total"))
-        print(prof_train.key_averages().table(sort_by="self_cuda_time_total"))
+        print(prof_train.key_averages().table(sort_by="cpu_time_total"))
+        print(prof_train.key_averages().table(sort_by="cuda_time_total"))
         if TEST_ENABLE:
           print("Test Profiler:")
-          print(prof_test.key_averages().table(sort_by="self_cpu_time_total"))
-          print(prof_test.key_averages().table(sort_by="self_cuda_time_total"))
+          print(prof_test.key_averages().table(sort_by="cpu_time_total"))
+          print(prof_test.key_averages().table(sort_by="cuda_time_total"))
         
     torch.save(model.state_dict(), f"exp/{cfg.exp_name}/model.pth")

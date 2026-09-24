@@ -10,5 +10,6 @@ num_workers: 7
 persistent_workers: true
 pin_memory: true
 non_blocking: true
+cuda_if: true
 test_enable: false
 use_profiler: true
