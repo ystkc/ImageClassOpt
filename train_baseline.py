@@ -94,6 +94,7 @@ if __name__ == '__main__':
     
     print("train model")
     if USE_PROFILER:
+        prof_train_1st = torch.profiler.profile(acc_events=True)
         prof_train = torch.profiler.profile(acc_events=True)
         prof_test = torch.profiler.profile(acc_events=True)
 
@@ -103,7 +104,10 @@ if __name__ == '__main__':
         acc_loss = torch.tensor(0.0).to(device)
         
         if USE_PROFILER:
-            prof_train.start()
+            if epoch == 0:
+                prof_train_1st.start()
+            else:
+                prof_train.start()
         start_time = time.time()
         for images, labels in train_loader:
             images = images.to(device, non_blocking=cfg.non_blocking)
@@ -115,7 +119,10 @@ if __name__ == '__main__':
             optimizer.step()
             acc_loss += loss.detach()
         if USE_PROFILER:
-            prof_train.stop()
+            if epoch == 0:
+                prof_train_1st.stop()
+            else:
+                prof_train.stop()
         epoch_time = time.time() - start_time
         print(f"Epoch {epoch+1}/{EPOCH}, Loss: {acc_loss.item()/batch_cnt:.4f} Time: {epoch_time:.4f}")
         acc_time += epoch_time
@@ -145,6 +152,9 @@ if __name__ == '__main__':
         print("Train Profiler:")
         print(prof_train.key_averages().table(sort_by="cpu_time_total"))
         print(prof_train.key_averages().table(sort_by="cuda_time_total"))
+        print("Train 1st Epoch Profiler:")
+        print(prof_train_1st.key_averages().table(sort_by="cpu_time_total"))
+        print(prof_train_1st.key_averages().table(sort_by="cuda_time_total"))
         if TEST_ENABLE:
           print("Test Profiler:")
           print(prof_test.key_averages().table(sort_by="cpu_time_total"))
