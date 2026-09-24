@@ -18,6 +18,7 @@ class Config:
     batch_size: int = 256
     epoch: int = 5
     lr: float = 9e-4 # 32=1e-4
+    fused_optimizer: bool = True
     
     num_workers: int = 7
     persistent_workers: bool = False
@@ -93,7 +94,7 @@ if __name__ == '__main__':
     model = model.to(device=device)
     
     criterion = nn.CrossEntropyLoss()
-    optimizer = optim.Adam(model.parameters(), lr=LR)
+    optimizer = optim.Adam(model.parameters(), lr=LR, fused=cfg.fused_optimizer)
     
     print("train model")
     if USE_PROFILER:

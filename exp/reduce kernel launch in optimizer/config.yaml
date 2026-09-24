@@ -1,18 +1,17 @@
 exp_name: reduce kernel launch in optimizer
-split_ratio: [0.9, 0.08, 0.02]
+split_ratio:
+- 0.9
+- 0.08
+- 0.02
 batch_size: 96
 epoch: 4
-lr: 9e-4
+lr: 0.0009
 fused_optimizer: true
-
 num_workers: 7
 persistent_workers: true
-
 pin_memory: true
 non_blocking: true
-
 cudnn_benchmark: false
 cuda_if: true
-
 test_enable: false
 use_profiler: true
