@@ -31,6 +31,8 @@ class Config:
     use_profiler: bool = False
 
 cfg: Config = OmegaConf.load("train.yaml")
+if cfg.num_workers == 0:
+    cfg.persistent_workers = False
 
 EPOCH = cfg.epoch
 BATCH_SIZE = cfg.batch_size
@@ -58,20 +60,24 @@ if __name__ == '__main__':
 
     print('split dataset')
     _, traindf, testdf = random_split(train_ds, SPLIT_RATIO, generator=torch.Generator().manual_seed(42))
-    print(len(traindf), len(testdf))
+    print(len(traindf), len(testdf), 'items')
     train_loader = DataLoader(
         traindf,
         batch_size=BATCH_SIZE,
         num_workers=cfg.num_workers,
         pin_memory=cfg.pin_memory,
-        persistent_workers=cfg.persistent_workers
+        persistent_workers=cfg.persistent_workers,
+        shuffle=True
     )
+    batch_cnt = len(train_loader)
+    print(batch_cnt, 'batch')
     test_loader = DataLoader(
         testdf,
         batch_size=BATCH_SIZE,
         num_workers=cfg.num_workers,
         pin_memory=cfg.pin_memory,
-        persistent_workers=cfg.persistent_workers
+        persistent_workers=cfg.persistent_workers,
+        shuffle=False
     )
 
 
@@ -94,7 +100,6 @@ if __name__ == '__main__':
     for epoch in range(EPOCH):
         model.train()
         acc_loss = torch.tensor(0.0).to(device)
-        print(len(train_loader))
         
         if USE_PROFILER:
             prof_train.start()
@@ -107,10 +112,10 @@ if __name__ == '__main__':
             loss = criterion(outputs, labels)
             loss.backward()
             optimizer.step()
-            acc_loss += loss
+            acc_loss += loss.detach()
         if USE_PROFILER:
             prof_train.stop()
-        print(f"Epoch {epoch+1}/{EPOCH}, Loss: {acc_loss.item()/len(train_loader):.4f} Time: {time.time() - start_time:.4f}")
+        print(f"Epoch {epoch+1}/{EPOCH}, Loss: {acc_loss.item()/batch_cnt:.4f} Time: {time.time() - start_time:.4f}")
 
         if not TEST_ENABLE:
             continue

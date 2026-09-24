@@ -8,14 +8,14 @@ from omegaconf import OmegaConf
 SCRIPT = "train_baseline.py"
 CONFIG = "train.yaml" 
 
+proc = subprocess.Popen([sys.executable, SCRIPT], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+
 # load
 cfg = OmegaConf.load(CONFIG)
 ROOT = os.path.dirname(__file__)
 EXP_NAME = cfg.exp_name
 EXP_ROOT = os.path.join(ROOT, "exp", EXP_NAME)
 os.makedirs(EXP_ROOT, exist_ok=True)
-
-proc = subprocess.Popen([sys.executable, SCRIPT], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
 
 # save
 OmegaConf.save(cfg, os.path.join(EXP_ROOT, "config.yaml"), resolve=True)
